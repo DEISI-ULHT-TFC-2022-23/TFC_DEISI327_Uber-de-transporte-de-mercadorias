@@ -1,21 +1,22 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_navigation/AgendarTransporte.dart';
 import 'package:flutter_navigation/AlterarContaCliente.dart';
 import 'package:flutter_navigation/ListarPedidosCliente.dart';
-import 'package:flutter_navigation/teste.dart';
-import 'package:geocode/geocode.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'Dados.dart';
 import 'Suporte.dart';
 import 'Login.dart';
-import 'package:geocoder2/geocoder2.dart';
 import 'package:flutter_google_places_hoc081098/flutter_google_places_hoc081098.dart';
 import 'package:google_api_headers/google_api_headers.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
+import 'package:flutter_navigation/conexao/conexao.dart';
+//import 'package:flutter_navigation/utilizadores/Transporte.dart';
+//import 'package:flutter_navigation/utilizadores/Dados.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
+import 'Dados.dart';
 
 class Home extends StatefulWidget{
   @override
@@ -27,36 +28,35 @@ class HomepageCliente extends State<Home> {
   int _selectedIndex = 0;
   String locationL = "Insira Localização para Levantamento ou Localize a sua Posição";
   String locationE = "Insira Localização para Entrega";
-  String googleApikey = "AIzaSyBPCxZHYUS5qWy7J40Tu1wfMvzbv9F_Re4";
+  String googleApikey = "AIzaSyAHJoRFk-eF4jvbvGErit7IxnnwA2_jZak";
   var latL;
-  var lonL;
+  var longL;
   var latE;
-  var lonE;
+  var longE;
 
   @override
   initState() {
 
     //try {
-      if (Dados().fazerLocalizacao == true &&
-          !["", null, false, 0].contains(Dados().itemALocalizar)) {
-        var value = Dados().itemALocalizar;
+    //  if (Dados().fazerLocalizacao == true &&
+      //    !["", null, false, 0].contains(Dados().itemALocalizar)) {
+      //  var value = Dados().itemALocalizar;
 
         // specified current users location
-        CameraPosition cameraPosition = new CameraPosition(
-          target: LatLng(value.latitude, value.longitude),
-          zoom: 10,
-        );
+     //   CameraPosition cameraPosition = new CameraPosition(
+      //    target: LatLng(value.latitude, value.longitude),
+      //    zoom: 10,
+       // );
 
-        final GoogleMapController controller =  _controller.future as GoogleMapController;
-        controller.animateCamera(
-            CameraUpdate.newCameraPosition(cameraPosition));
+      //  final GoogleMapController controller =  _controller.future as GoogleMapController;
+      //  controller.animateCamera(
+      //      CameraUpdate.newCameraPosition(cameraPosition));
 
-        setState(() {});
+       // setState(() {});
 
-        print("TESTE DETALHES");
-        Dados().fazerLocalizacao = false;
-        Dados().itemALocalizar = "";
-      }
+     //   Dados().fazerLocalizacao = false;
+      //  Dados().itemALocalizar = "";
+   //   }
   //  }catch(E){}
   }
 
@@ -68,42 +68,14 @@ class HomepageCliente extends State<Home> {
 
     if(index==1){
 
-      //////////////////
-      getUserCurrentLocation().then((value) async {
+     getUserCurrentLocation().then((value) async {
 
         latL = value.latitude;
-        lonL = value.longitude;
+        longL = value.longitude;
 
-        GeoCode geoCode = GeoCode();
+        locationL = Dados().utilizadorAtivo.morada;
 
-        try {
-
-          var coordinates2 = await geoCode.reverseGeocoding(latitude: latL, longitude: lonL);
-
-          print('TESTE !!!!1$coordinates2');
-
-          Coordinates coordinates = await geoCode.forwardGeocoding(
-              address: "532 S Olive St, Los Angeles, CA 90013");
-
-        //  Future<Address> reverseGeocoding({double latitude, double longitude})
-
-          print("Latitude: ${coordinates.latitude}");
-          print("Longitude: ${coordinates.longitude}");
-        } catch (e) {
-          print(e);
-        }
-      //  final coordinates =
-      //  new Coordinates(value.position.latitude, value.position.longitude);
-      //  var addresses = await Geocoder.google(kGoogleApiKey)
-    //        .findAddressesFromCoordinates(coordinates);
-
-      //  print("Address: ${addresses.first.featureName}");
-
-        print("TESTE $latL <> $lonL");
-
-        ///////////////
-
-        Dados().utilizadorAtivo.atualizarLocalizacao(value.latitude, value.longitude);
+      //  Dados().utilizadorAtivo.atualizarLocalizacao(value.latitude, value.longitude);
         // marker added for current users location
         _markers.add(
             Marker(
@@ -131,10 +103,10 @@ class HomepageCliente extends State<Home> {
     }
 
     if(index == 2){
-      if(!["", null, false, 0].contains(locationL) &&
-          !["", null, false, 0].contains(locationE)){
+      if(locationL!="Insira Localização para Levantamento ou Localize a sua Posição" &&
+          locationE!="Insira Localização para Entrega"){
     showAlertDialog(context, locationL, locationE,
-    latL, lonL, 0.0, 0.0);
+    latL, longL, latE, longE);
     }else{
         showAlertDialogLocalizacoes(context);
       }
@@ -322,7 +294,7 @@ class HomepageCliente extends State<Home> {
                         mode: Mode.overlay,
                         types: [],
                         strictbounds: false,
-                        components: [Component(Component.country, 'np')],
+                        components: [Component(Component.country, 'pt')],
                         //google_map_webservice package
                         onError: (err){
                           print(err);
@@ -344,7 +316,8 @@ class HomepageCliente extends State<Home> {
                       final geometry = detail.result.geometry!;
                       final lat = geometry.location.lat;
                       final lang = geometry.location.lng;
-                     // var newlatlang = LatLng(lat, lang);
+                      latL = lat;
+                      longL = lang;
 
                       CameraPosition cameraPosition = new CameraPosition(
                         target: LatLng(lat, lang),
@@ -373,7 +346,7 @@ class HomepageCliente extends State<Home> {
               )
           ),
           Positioned(  //search input bar
-              top:10,
+              top:100,
               child: InkWell(
                   onTap: () async {
                     var place = await PlacesAutocomplete.show(
@@ -382,7 +355,7 @@ class HomepageCliente extends State<Home> {
                         mode: Mode.overlay,
                         types: [],
                         strictbounds: false,
-                        components: [Component(Component.country, 'np')],
+                        components: [Component(Component.country, 'pt')],
                         //google_map_webservice package
                         onError: (err){
                           print(err);
@@ -404,7 +377,8 @@ class HomepageCliente extends State<Home> {
                       final geometry = detail.result.geometry!;
                       final lat = geometry.location.lat;
                       final lang = geometry.location.lng;
-                      // var newlatlang = LatLng(lat, lang);
+                      latE = lat;
+                      longE = lang;
 
                       CameraPosition cameraPosition = new CameraPosition(
                         target: LatLng(lat, lang),
@@ -456,7 +430,13 @@ class LocationPageState extends State<Home> {
 showAlertDialog(BuildContext context, levantamentoMorada, entregaMorada,
     latL, lonL, latE, lonE) async {
 
-  var preco = 0;
+  var precoL = Dados().getPreco('B', Dados().calcularDistancia(latL, lonL, latE, lonE));
+  var precoBE = Dados().getPreco('BE', Dados().calcularDistancia(latL, lonL, latE, lonE));
+  var precoCC = Dados().getPreco('C1', Dados().calcularDistancia(latL, lonL, latE, lonE));
+  var precoC = Dados().getPreco('C', Dados().calcularDistancia(latL, lonL, latE, lonE));
+  var precoCEE = Dados().getPreco('C1E', Dados().calcularDistancia(latL, lonL, latE, lonE));
+  var precoCE = Dados().getPreco('CE', Dados().calcularDistancia(latL, lonL, latE, lonE));
+
 
   //////////////7Calcular preco////////////////////77
 
@@ -468,11 +448,11 @@ showAlertDialog(BuildContext context, levantamentoMorada, entregaMorada,
             children: [
               TableCell(child: Image.asset('Images/ligeiro.jpg')),
               TableCell(child: Text('Ligeiro')),
-              TableCell(child: Text('Custo: ${preco}')),
+              TableCell(child: Text('Custo: ${precoL}')),
               TableCell(child: new ElevatedButton(onPressed: (){
 
                 showAlertDialogConfirmar(context, levantamentoMorada, entregaMorada,
-                    latL, lonL, latE, lonE, preco, 'L');
+                    latL, lonL, latE, lonE, precoL, 'L');
 
               }, child: Text('+'))),
             ]
@@ -481,11 +461,11 @@ showAlertDialog(BuildContext context, levantamentoMorada, entregaMorada,
           children: [
             TableCell(child: Image.asset('Images/ligeiroMercadorias.jpg')),
             TableCell(child: Text('Ligeiro Mercadorias')),
-            TableCell(child: Text('Custo: ${preco}')),
+            TableCell(child: Text('Custo: ${precoBE}')),
             TableCell(child: new ElevatedButton(onPressed: (){
 
               showAlertDialogConfirmar(context, levantamentoMorada, entregaMorada,
-                  latL, lonL, latE, lonE, preco, 'LM');
+                  latL, lonL, latE, lonE, precoBE, 'LM');
 
             }, child: Text('+'))),
           ]
@@ -494,11 +474,11 @@ showAlertDialog(BuildContext context, levantamentoMorada, entregaMorada,
           children: [
             TableCell(child: Image.asset('Images/pesado.jpg')),
             TableCell(child: Text('Pesado')),
-            TableCell(child: Text('Custo: ${preco}')),
+            TableCell(child: Text('Custo: ${precoCC}')),
             TableCell(child: new ElevatedButton(onPressed: (){
 
               showAlertDialogConfirmar(context, levantamentoMorada, entregaMorada,
-                  latL, lonL, latE, lonE, preco, 'P');
+                  latL, lonL, latE, lonE, precoCC, 'P');
 
             }, child: Text('+'))),
           ]
@@ -507,11 +487,11 @@ showAlertDialog(BuildContext context, levantamentoMorada, entregaMorada,
           children: [
             TableCell(child: Image.asset('Images/pesadoMercadorias.jpg')),
             TableCell(child: Text('Pesado Mercadorias')),
-            TableCell(child: Text('Custo: ${preco}')),
+            TableCell(child: Text('Custo: ${precoC}')),
             TableCell(child: new ElevatedButton(onPressed: (){
 
               showAlertDialogConfirmar(context, levantamentoMorada, entregaMorada,
-                  latL, lonL, latE, lonE, preco, 'PM');
+                  latL, lonL, latE, lonE, precoC, 'PM');
 
             }, child: Text('+'))),
           ]
@@ -520,11 +500,11 @@ showAlertDialog(BuildContext context, levantamentoMorada, entregaMorada,
           children: [
             TableCell(child: Image.asset('Images/reboque.jpg')),
             TableCell(child: Text('Reboque')),
-            TableCell(child: Text('Custo: ${preco}')),
+            TableCell(child: Text('Custo: ${precoCEE}')),
             TableCell(child: new ElevatedButton(onPressed: (){
 
               showAlertDialogConfirmar(context, levantamentoMorada, entregaMorada,
-                  latL, lonL, latE, lonE, preco, 'R');
+                  latL, lonL, latE, lonE, precoCEE, 'R');
 
             }, child: Text('+'))),
           ]
@@ -533,11 +513,11 @@ showAlertDialog(BuildContext context, levantamentoMorada, entregaMorada,
           children: [
             TableCell(child: Image.asset('Images/reboquepesados.jpg')),
             TableCell(child: Text('Reboque Pesados')),
-            TableCell(child: Text('Custo: ${preco}')),
+            TableCell(child: Text('Custo: ${precoCE}')),
             TableCell(child: new ElevatedButton(onPressed: (){
 
               showAlertDialogConfirmar(context, levantamentoMorada, entregaMorada,
-                  latL, lonL, latE, lonE, preco, 'RP');
+                  latL, lonL, latE, lonE, precoCE, 'RP');
 
             }, child: Text('+'))),
           ]
@@ -566,7 +546,7 @@ showAlertDialog(BuildContext context, levantamentoMorada, entregaMorada,
   );
 }
 
-showAlertDialogConfirmar(BuildContext context, levantamentoMorada, entregaMorada,
+showAlertDialogConfirmar(BuildContext context, levantamento, entrega,
     latL, lonL, latE, lonE, preco, classV) async {
 
   final _mensagemController = TextEditingController();
@@ -591,9 +571,10 @@ showAlertDialogConfirmar(BuildContext context, levantamentoMorada, entregaMorada
     child: Text("Sim"),
     onPressed:  () {
       if(_mensagemController.text.isNotEmpty){
-      Dados().adicionarTransporteSolicitado(classV, levantamentoMorada,
-          entregaMorada, _mensagemController.text, latL, lonL, latE, lonE, preco);
+      Dados().adicionarTransporteSolicitado(classV, levantamento,
+          entrega, _mensagemController.text, latL, lonL, latE, lonE, preco);
 
+       // criarTransporte(_mensagemController.text.trim(), levantamento, entrega, latL, lonL, latE, lonE, classV);
 
       Navigator.push(
           context, MaterialPageRoute(builder: (_) => Home()));
@@ -671,3 +652,52 @@ showAlertDialogLocalizacoes(BuildContext context) async {
   );
 
 }
+
+
+////////////////////
+criarTransporte(descricao, levantamento, entrega, latL, longL, latE, longE, classV ) async{
+
+  /* Transporte transporte = Transporte(
+    1,
+    2,
+    0,
+    descricao,
+    0,///PRECO
+    //Dados().preco(classV, Dados().calculateDistance(latL, longL, latE, longE)).toInt(),
+    levantamento,
+    "",
+    entrega,
+    "",
+    latL,
+    longL,
+    latE,
+    longE,
+    0,
+    0,
+    0,
+    0,
+    0,
+  );
+
+
+  try{
+    var res = await http.post(
+      Uri.parse(conexao.criarTransporte),
+      body: transporte.toJson,
+    );
+    if(res.statusCode == 200){
+      var resBodyTransporte = jsonDecode(res.body);
+      if(resBodyTransporte['sucess'] == true){
+
+        Fluttertoast.showToast(msg: "ERRO1-CriarTransporte");
+      }
+      else{
+        Fluttertoast.showToast(msg: "ERRO2-CriarTransporte");
+      }
+    }
+  }
+  catch(e){
+    print(e.toString());
+  }*/
+}
+

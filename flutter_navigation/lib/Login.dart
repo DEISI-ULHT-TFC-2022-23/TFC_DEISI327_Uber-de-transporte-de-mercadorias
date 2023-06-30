@@ -1,11 +1,17 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_navigation/Dados.dart';
 import 'package:flutter_navigation/HomepageCliente.dart';
 import 'package:flutter_navigation/TipoUtilizador.dart';
-
+//import 'package:flutter_navigation/utilizadores/UtilizadorC.dart';
+//import 'package:fluttertoast/fluttertoast.dart';
+//import 'package:http/http.dart' as http;
 import 'HomepageCondutor.dart';
 import 'RecuperarConta.dart';
+//import 'package:flutter_navigation/conexao/conexao.dart';
+//import 'package:flutter_navigation/utilizadores/Utilizador.dart';
+//import 'package:flutter_navigation/utilizadores/Dados.dart';
+import 'Dados.dart';
 
 
 class Login extends StatefulWidget {
@@ -17,6 +23,7 @@ class _LoginState extends State<Login> {
 
   final _emailController = TextEditingController();
   final _passController = TextEditingController();
+
 
   @override
   Widget build(BuildContext context) {
@@ -83,6 +90,9 @@ class _LoginState extends State<Login> {
                   color: Colors.blue, borderRadius: BorderRadius.circular(20)),
               child: TextButton(
                 onPressed: () {
+
+                //  loginUser();
+
                   if(Dados().verificarConta(_emailController.text, _passController.text) == 'OK'){
                     if(Dados().utilizadorAtivo.tipo == 'cliente'){
                       Navigator.push(
@@ -122,7 +132,55 @@ class _LoginState extends State<Login> {
       ),
     );
   }
-}
+
+ /* loginUser() async{
+    var res = await http.post(
+        Uri.parse(conexao.login),
+        body: {
+          "email": _emailController.text.trim(),
+          "pass": _passController.text.trim(),
+        }
+    );
+    //setState(){
+     // _emailController.clear();
+     // _passController.clear();
+    //}
+    //setState();
+
+    if(res.statusCode==200){
+
+     // var resBodyLogIn =json.decode(json.encode(res.body));
+      //res.body.toString().replaceAll("\n","");
+    //  var resBodyLogIn = jsonDecode(res.body);
+
+     // var resBodyLogIn = true;
+    //  print('testeLOGIN--$resBodyLogIn!!!!!!!!!!!!!!!');
+      //if(resBodyLogIn['sucess'] == true){
+        if(true == true) {
+          ///  Fluttertoast.showToast(msg: "Email já registado! Utilize outro email.");
+          print('testeLo3!!!!!!!!!!!!!!!');
+          // UtilizadorC utilizador =  UtilizadorC.fromJson(resBodyLogIn["userData"]);
+
+          //  Dados.utilizadorAtivo = utilizador;
+
+          //   if(utilizador.tipo == "cliente"){
+
+          Navigator.push(
+              context, MaterialPageRoute(builder: (_) => Home()));
+          //   }
+          //    if(utilizador.tipo == "condutor"){
+
+          //    Navigator.push(
+          //      context, MaterialPageRoute(builder: (_) => HomePage()));
+
+          //}
+        }
+        else{
+        }
+      }
+    }*/
+  }
+
 
 showAlertDialog(BuildContext context, var mensagem) async {
 

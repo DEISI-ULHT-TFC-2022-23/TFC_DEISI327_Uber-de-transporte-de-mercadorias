@@ -1,7 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_navigation/Login.dart';
 import 'package:flutter_navigation/Dados.dart';
+import 'package:flutter_navigation/Login.dart';
+//import 'package:flutter_navigation/conexao/conexao.dart';
+//import 'package:flutter_navigation/utilizadores/Utilizador.dart';
+//import 'package:fluttertoast/fluttertoast.dart';
+//import 'package:http/http.dart' as http;
 
 class UtilizadorCliente extends StatelessWidget {
 
@@ -12,9 +17,7 @@ class UtilizadorCliente extends StatelessWidget {
   final _ccController = TextEditingController();
   final _nifController = TextEditingController();
   final _telefoneController = TextEditingController();
-  final _diaController = TextEditingController();
-  final _mesController = TextEditingController();
-  final _anoController = TextEditingController();
+  final _nascimentoController = TextEditingController();
   final _moradaController = TextEditingController();
   final _cidadeController = TextEditingController();
   final _codigoPostalController = TextEditingController();
@@ -76,9 +79,7 @@ class UtilizadorCliente extends StatelessWidget {
                           makeInput(_ccController,label: "Identificação (Número de Cartão de Cidadão ou Similar):",obsureText: true),
                           makeInput(_nifController,label: "Número de Identificação Fiscal:",obsureText: true),
                           makeInput(_telefoneController,label: "Telefone:",obsureText: true),
-                          makeInput(_diaController,label: "Dia de Nascimento:",obsureText: true),
-                          makeInput(_mesController,label: "Mês de Nascimento:",obsureText: true),
-                          makeInput(_anoController,label: "Ano de Nascimento;",obsureText: true),
+                          makeInput(_nascimentoController,label: "Data de Nascimento:",obsureText: true),
                           makeInput(_moradaController,label: "Morada:",obsureText: true),
                           makeInput(_cidadeController,label: "Cidade:",obsureText: true),
                           makeInput(_codigoPostalController,label: "Código Postal:",obsureText: true),
@@ -99,15 +100,16 @@ class UtilizadorCliente extends StatelessWidget {
                             if(_pNomeController.text.isNotEmpty && _uNomeController.text.isNotEmpty &&
                             _emailController.text.isNotEmpty && _passController.text.isNotEmpty &&
                             _ccController.text.isNotEmpty && _nifController.text.isNotEmpty &&
-                            _telefoneController.text.isNotEmpty && _diaController.text.isNotEmpty &&
-                            _mesController.text.isNotEmpty && _anoController.text.isNotEmpty &&
+                            _telefoneController.text.isNotEmpty && _nascimentoController.text.isNotEmpty &&
                             _moradaController.text.isNotEmpty && _cidadeController.text.isNotEmpty &&
                             _codigoPostalController.text.isNotEmpty ) {
 
+                             // validarEmail();
+
                               Dados().adicionarCliente(_pNomeController.text, _uNomeController.text, _emailController.text,
                                   _passController.text, _ccController.text, _nifController.text, _telefoneController.text,
-                                  _diaController.text, _mesController.text, _anoController.text, _moradaController.text,
-                                  _cidadeController.text, _codigoPostalController.text);
+                                  _nascimentoController.text, _moradaController.text, _cidadeController.text,
+                                  _codigoPostalController.text);
 
                               showAlertDialog2(context);
 
@@ -138,6 +140,73 @@ class UtilizadorCliente extends StatelessWidget {
       ),
     );
   }
+  /*
+  validarEmail() async{
+    try {
+      var res = await http.post(
+          Uri.parse(conexao.validarEmail),
+          body: {
+            'email': _emailController.text.trim(),
+          }
+      );
+      if(res.statusCode==200){
+        //var resBodyValidarEmail = jsonDecode(res.body);
+       // var resBodyValidarEmail =json.decode(json.encode(res.body));
+        var resBodyValidarEmail =json.decode(res.body);
+        //print(res.body.toString());
+        if(resBodyValidarEmail['emailFound'] == true){
+          Fluttertoast.showToast(msg: "Email já registado! Utilize outro email.");
+        }
+        else{
+          registarUtilizador();
+        }
+      }
+    }
+    catch(e){
+      print(e.toString());
+    }
+  }
+
+  registarUtilizador() async{
+    Utilizador utilizador = Utilizador(
+      1,
+      _pNomeController.text.trim(),
+      _uNomeController.text.trim(),
+      _emailController.text.trim(),
+      _passController.text.trim(),
+      _ccController.text.trim(),
+      _nifController.text.trim(),
+      _telefoneController.text.trim(),
+      _nascimentoController.text.trim(),
+      _moradaController.text.trim(),
+      _cidadeController.text.trim(),
+      _codigoPostalController.text.trim(),
+      "cliente",
+    );
+
+    try{
+      var res = await http.post(
+        Uri.parse(conexao.signup),
+        body: utilizador.toJson(),
+      );
+      if(res.statusCode == 200){
+        var resBodyOfSignUp = jsonDecode(res.body);
+        if(resBodyOfSignUp['sucess'] == true){
+          ////POSSIVEL POP UP Registado com Sucesso
+          Fluttertoast.showToast(msg: "ERRO1-singup");
+        }
+        else{
+          ////POSSIVEL POP UP de N Registado
+          Fluttertoast.showToast(msg: "ERRO2-singUp");
+        }
+        }
+    }
+    catch(e){
+      print(e.toString());
+    }
+  }
+
+   */
 }
 
 
@@ -211,4 +280,3 @@ showAlertDialog2(BuildContext context) {
     Navigator.of(context, rootNavigator: true).pop();
   });
 }
-

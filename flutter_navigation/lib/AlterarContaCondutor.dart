@@ -6,6 +6,7 @@ import 'Classificacao.dart';
 import 'HomepageCondutor.dart';
 import 'ListarTransportesCondutor.dart';
 import 'SuporteCondutor.dart';
+import 'Dados.dart';
 
 class AlterarContaCondutor extends StatelessWidget {
 
@@ -21,9 +22,7 @@ class AlterarContaCondutor extends StatelessWidget {
   final _seguroController = TextEditingController();
   final _classVController = TextEditingController();
   final _telefoneController = TextEditingController();
-  final _diaController = TextEditingController();
-  final _mesController = TextEditingController();
-  final _anoController = TextEditingController();
+  final _nascimentoController = TextEditingController();
   final _moradaController = TextEditingController();
   final _cidadeController = TextEditingController();
   final _codigoPostalController = TextEditingController();
@@ -183,13 +182,11 @@ class AlterarContaCondutor extends StatelessWidget {
                           makeInput(_nifController,label: "Número de Identificação Fiscal:",obsureText: true),
                         makeInput(_cConducaoController,label: "Número da Carta de Condução:",obsureText: true),
                         makeInput(_categoriaCartaController,label: "Categoria/as da Carta de condução",obsureText: true),
-                        makeInput(_passController,label: "Matrícula do Veículo Utilizado em Serviço:",obsureText: true),
-                        makeInput(_ccController,label: "Seguro do Veículo Utilizado em Serviço:",obsureText: true),
-                        makeInput(_nifController,label: "Classe do Veículo Utlizado em Serviço:",obsureText: true),
+                        makeInput(_matriculaController,label: "Matrícula do Veículo Utilizado em Serviço:",obsureText: true),
+                        makeInput(_seguroController,label: "Seguro do Veículo Utilizado em Serviço:",obsureText: true),
+                        makeInput(_classVController,label: "Classe do Veículo Utlizado em Serviço:",obsureText: true),
                           makeInput(_telefoneController,label: "Telefone:",obsureText: true),
-                          makeInput(_diaController,label: "Dia de Nascimento:",obsureText: true),
-                          makeInput(_mesController,label: "Mês de Nascimento:",obsureText: true),
-                          makeInput(_anoController,label: "Ano de Nascimento;",obsureText: true),
+                          makeInput(_nascimentoController,label: "Data de Nascimento:",obsureText: true),
                           makeInput(_moradaController,label: "Morada:",obsureText: true),
                           makeInput(_cidadeController,label: "Cidade:",obsureText: true),
                           makeInput(_codigoPostalController,label: "Código Postal:",obsureText: true),
@@ -208,11 +205,31 @@ class AlterarContaCondutor extends StatelessWidget {
 
                               ) {
 
-                              Dados().adicionarCondutor(_pNomeController.text, _uNomeController.text, _emailController.text,
-                                  _passController.text, _ccController.text, _nifController.text, _cConducaoController.text,
-                                  _categoriaCartaController.text, _matriculaController.text, _seguroController.text, _classVController.text,
-                                  _telefoneController.text, _diaController.text, _mesController.text,
-                                  _anoController.text, _moradaController.text, _cidadeController.text, _codigoPostalController.text);
+                            if(_pNomeController.text.isNotEmpty){
+                              Dados().utilizadorAtivo.primeiroNome = _pNomeController.text;
+                            }
+                            if(_uNomeController.text.isNotEmpty){
+                              Dados().utilizadorAtivo.ultimoNome = _uNomeController.text;
+                            }
+                            if(_emailController.text.isNotEmpty){
+                              Dados().utilizadorAtivo.email = _emailController.text;
+                            }
+                            if(_passController.text.isNotEmpty){
+                              Dados().utilizadorAtivo.password = _passController.text;
+                            }
+                            if(_telefoneController.text.isNotEmpty){
+                              Dados().utilizadorAtivo.telefone = _telefoneController.text;
+                            }
+                            if(_matriculaController.text.isNotEmpty){
+                              Dados().utilizadorAtivo.matricula = _matriculaController.text;
+                            }
+                            if(_classVController.text.isNotEmpty){
+                              Dados().utilizadorAtivo.classV = _classVController.text;
+                            }
+                            if(_categoriaCartaController.text.isNotEmpty){
+                              Dados().utilizadorAtivo.categoriaCarta = _classVController.text;
+                            }
+
 
                               showAlertDialog(context);
 

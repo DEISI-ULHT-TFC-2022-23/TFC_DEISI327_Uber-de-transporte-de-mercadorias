@@ -29,7 +29,7 @@ class _HomePageCondutor extends State<HomePage> {
 
       print(value.latitude.toString() +" "+value.longitude.toString());
 
-      Dados().utilizadorAtivo.atualizarLocalizacao(value.latitude.toString(), value.longitude.toString());
+      Dados().utilizadorAtivo.atualizarLocalizacao(value.latitude, value.longitude);
       // marker added for current users location
       _markers.add(
           Marker(
@@ -93,7 +93,7 @@ class _HomePageCondutor extends State<HomePage> {
     PolylinePoints polylinePoints = PolylinePoints();
     var partida = PointLatLng(Dados().utilizadorAtivo.latAtual, Dados().utilizadorAtivo.lonAtual);
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-        'AIzaSyBPCxZHYUS5qWy7J40Tu1wfMvzbv9F_Re4', partida, PointLatLng(destino.latitude, destino.longitude),
+        'AIzaSyAHJoRFk-eF4jvbvGErit7IxnnwA2_jZak', partida, PointLatLng(destino.latitude, destino.longitude),
     );
 
     if(result.points.isNotEmpty) {
@@ -315,7 +315,7 @@ class _HomePageCondutor extends State<HomePage> {
 
 showAlertDialogDisponibilidade(BuildContext context, mensagem) async {
 
-  var msg = mensagem.toString();
+  var msg = mensagem;
 
   // set up the AlertDialog
   AlertDialog alert = AlertDialog(
@@ -343,7 +343,7 @@ showAlertDialogLevantamento(BuildContext context, mensagem) async {
   // set up the AlertDialog
   AlertDialog alert = AlertDialog(
     title: Text("Estado de Levantamento de Mercadorias:"),
-    content: Text(mensagem),
+    content: Text("$mensagem"),
 
   );
   // show the dialog
@@ -392,8 +392,10 @@ showAlertDialogTransporte(BuildContext context,Transporte transporte) async {
   Widget aceitarButton = FloatingActionButton(
     child: Text("Sim"),
     onPressed:  () {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (_) => HomePage()));
+    //  Navigator.push(
+      Dados().atribuirTransporte(Dados().utilizadorAtivo, transporte);
+      Navigator.of(context, rootNavigator: true).pop();
+
     },
   );
   Widget rejeitarButton = FloatingActionButton(
@@ -422,7 +424,7 @@ showAlertDialogTransporte(BuildContext context,Transporte transporte) async {
     },
   );
 
-  Timer(Duration(seconds: 3), () {
+  Timer(Duration(seconds: 10), () {
     Navigator.of(context, rootNavigator: true).pop();
   },
   );

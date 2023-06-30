@@ -240,7 +240,7 @@ showAlertDialog1(BuildContext context) {
 showAlertDialog2(BuildContext context,Transporte transporte, distancia) async {
 
   //var preco = Dados().getPreco(transporte.classeV, distancia);
-  var preco = '300eur';
+  var preco = '200eur';
 
   Widget aceitarButton = FloatingActionButton(
     child: Text("Sim"),

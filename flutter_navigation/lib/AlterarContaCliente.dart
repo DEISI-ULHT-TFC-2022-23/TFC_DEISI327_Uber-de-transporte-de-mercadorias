@@ -8,6 +8,7 @@ import 'HomepageCliente.dart';
 import 'ListarPedidosCliente.dart';
 import 'RecuperarConta.dart';
 import 'Suporte.dart';
+import 'Dados.dart';
 
 class AlterarContaCliente extends StatelessWidget {
 
@@ -198,10 +199,21 @@ class AlterarContaCliente extends StatelessWidget {
 
                               ) {
 
-                              Dados().adicionarCliente(_pNomeController.text, _uNomeController.text, _emailController.text,
-                                  _passController.text, _ccController.text, _nifController.text, _telefoneController.text,
-                                  _diaController.text, _mesController.text, _anoController.text, _moradaController.text,
-                                  _cidadeController.text, _codigoPostalController.text);
+                            if(_pNomeController.text.isNotEmpty){
+                              Dados().utilizadorAtivo.primeiroNome = _pNomeController.text;
+                            }
+                            if(_uNomeController.text.isNotEmpty){
+                              Dados().utilizadorAtivo.ultimoNome = _uNomeController.text;
+                            }
+                            if(_emailController.text.isNotEmpty){
+                              Dados().utilizadorAtivo.email = _emailController.text;
+                            }
+                            if(_passController.text.isNotEmpty){
+                              Dados().utilizadorAtivo.password = _passController.text;
+                            }
+                            if(_telefoneController.text.isNotEmpty){
+                              Dados().utilizadorAtivo.telefone = _telefoneController.text;
+                            }
 
                               showAlertDialog(context);
 

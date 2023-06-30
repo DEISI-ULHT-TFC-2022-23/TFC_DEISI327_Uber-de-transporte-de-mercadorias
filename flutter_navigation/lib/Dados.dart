@@ -25,10 +25,10 @@ class Dados {
   init() {
 
     Dados().adicionarCondutor('Carlos', 'Manuel', 'aa', 'aa', 'aa', 'aa', 'aa',
-        'aa', 'aa', 'aa', 'aa', 'aa', 'aa', 'aa', 'aa', 'aa', 'aa', 'aa');
+        'aa', 'aa', 'aa', 'aa', 'aa', 'aa', 'aa', 'aa', 'aa');
 
     Utilizador cliente = new Utilizador('antonio', 'catarino', 'aaa', 'aaa', 'aaa', 'aaa', 'aaa',
-        'aaa', 'aaa', 'aaa', 'aaa', 'aaa', 'aaa');
+        'aaa', 'aaa', 'aaa', 'aaa');
 
     utilizadores.add(cliente);
 
@@ -61,17 +61,17 @@ class Dados {
         utilizadorAtivo.listaTransportes.add(transporte);
   }
 
-  adicionarCliente(primeiroNome, ultimoNome, email, password, cc, nif, telefone, dia, mes, ano, morada,
+  adicionarCliente(primeiroNome, ultimoNome, email, password, cc, nif, telefone, nascimento, morada,
       cidade, codigoPostal){
-    var cliente = Utilizador(primeiroNome, ultimoNome, email, password, cc, nif, telefone, dia, mes, ano, morada,
+    var cliente = Utilizador(primeiroNome, ultimoNome, email, password, cc, nif, telefone, nascimento, morada,
         cidade, codigoPostal);
     utilizadores.add(cliente);
   }
 
   adicionarCondutor(primeiroNome, ultimoNome, email, password, cc, nif, cConducao, categoriaCarta,
-      matricula, seguro, classV, telefone, dia, mes, ano, morada, cidade, codigoPostal){
+      matricula, seguro, classV, telefone, nascimento, morada, cidade, codigoPostal){
 
-    Utilizador condutor = new Utilizador(primeiroNome, ultimoNome, email, password, cc, nif, telefone, dia, mes, ano, morada,
+    Utilizador condutor = new Utilizador(primeiroNome, ultimoNome, email, password, cc, nif, telefone, nascimento, morada,
         cidade, codigoPostal);
     condutor.UtilizadorCondutor(cConducao, categoriaCarta, matricula, seguro, classV);
     utilizadores.add(condutor);
@@ -88,7 +88,7 @@ class Dados {
   }
   ///////////////////////////////
   semCodutor(transporte){
-    Utilizador condutor = new Utilizador('', '', '', '', '', '', '', '', '', '', '', '', '');
+    Utilizador condutor = new Utilizador('', '', '', '', '', '', '', '', '', '', '');
     transporte.condutor=condutor;
   }
 
@@ -109,7 +109,7 @@ class Dados {
         emailCheck = true;
         if (utilizador.password == pass) {
           passwordCheck = true;
-          utilizadorAtivo = utilizador;
+          Dados().utilizadorAtivo = utilizador;
           return 'OK';
         }
       }
@@ -141,17 +141,47 @@ class Dados {
 
   getPreco(classV, distancia){
     if(classV == 'B'){
-      return (3*distancia);
+      if(distancia<=20){
+        return 60;
+      }
+      else{
+        return (60+(distancia-20));
+      }
     }else if(classV == 'BE'){
-      return (4*distancia);
+      if(distancia<=20){
+        return 70;
+      }
+      else{
+        return (70+(distancia-20));
+      }
     }else if(classV == 'C1'){
-      return (5*distancia);
+      if(distancia<=20){
+        return 100;
+      }
+      else{
+        return (100+(distancia-20));
+      }
     }else if(classV == 'C'){
-      return (6*distancia);
+      if(distancia<=20){
+        return 120;
+      }
+      else{
+        return (120+(distancia-20));
+      }
     }else if(classV == 'C1E'){
-      return (7*distancia);
+      if(distancia<=20){
+        return 70;
+      }
+      else{
+        return (70+(distancia-20));
+      }
     }else if(classV == 'CE'){
-      return (8*distancia);
+      if(distancia<=20){
+        return 80;
+      }
+      else{
+        return (80+(distancia-20));
+      }
     }
 
   }
@@ -202,9 +232,7 @@ class Utilizador{
   var emServico=false;
   /////
   var telefone;
-  var dia;
-  var mes;
-  var ano;
+  var nascimento;
   var morada;
   var cidade;
   var codigoPostal;
@@ -217,7 +245,7 @@ class Utilizador{
   double latAtual=0.0;
   double lonAtual=0.0;
 
-  Utilizador(primeiroNome, ultimoNome, email, password, cc, nif, telefone, dia, mes, ano, morada,
+  Utilizador(primeiroNome, ultimoNome, email, password, cc, nif, telefone, nascimento, morada,
       cidade, codigoPostal) {
 
     this.primeiroNome = primeiroNome;
@@ -227,9 +255,7 @@ class Utilizador{
     this.cc = cc;
     this.nif = nif;
     this.telefone = telefone;
-    this.dia = dia;
-    this.mes = mes;
-    this.ano = ano;
+    this.nascimento = nascimento;
     this.morada = morada;
     this.cidade = cidade;
     this.matricula = "";
@@ -244,6 +270,8 @@ class Utilizador{
     this.seguro = seguro;
     this.classV = classV;
     this.tipo = 'condutor';
+    this.disponivel = false;
+    this.emServico = false;
 
   }
 
@@ -266,7 +294,7 @@ class Utilizador{
       Dados().utilizadorAtivo.disponivel=false;
     }
   }
-  getDisponibilidade(){
+ String getDisponibilidade(){
     if(Dados().utilizadorAtivo.disponivel == true){
       return "Disponível a receber solicitações de transporte!";
     }else{
@@ -274,12 +302,12 @@ class Utilizador{
     }
   }
 
-  fazerLevantamento(){
+  String fazerLevantamento(){
     for(var item in listaTransportes){
       if(item.ativo==true){
 
-        item.latAtual = Dados().utilizadorAtivo.latAtual;
-        item.longAtual = Dados().utilizadorAtivo.lonAtual;
+        //item.latAtual = Dados().utilizadorAtivo.latAtual;
+       // item.longAtual = Dados().utilizadorAtivo.lonAtual;
         item.estadoLevantamento = true;
 
         final now = new DateTime.now();
@@ -293,12 +321,12 @@ class Utilizador{
     return "Sem transporte ativo!";
   }
 
-  fazerEntrega(){
+  String fazerEntrega(){
     for(var item in listaTransportes){
       if(item.ativo==true && item.estadoLevantamento == true){
 
-        item.latAtual= Dados().utilizadorAtivo.latAtual;
-        item.longAtual= Dados().utilizadorAtivo.lonAtual;
+       // item.latAtual= Dados().utilizadorAtivo.latAtual;
+       // item.longAtual= Dados().utilizadorAtivo.lonAtual;
         Dados().utilizadorAtivo.emServio=false;
         item.estadoEntrega = true;
         item.ativo = false;
